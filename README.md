@@ -1,39 +1,55 @@
-# multipoint-navigation-planner
+# 🚌 Öffi-Routenplaner
 
-This template should help get you started developing with Vue 3 in Vite.
+A Vue 3 application for planning public transport routes in Austria. Calculate transit times between multiple addresses using Google Maps APIs.
 
-## Recommended IDE Setup
+## ✨ Features
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- 🔍 Address autocomplete with Google Places API
+- 🗺️ Public transport time calculation between multiple points
+- 🎯 Optimized for Vienna's public transport system
 
-## Type Support for `.vue` Imports in TS
+## 🚀 Getting Started
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+### Prerequisites
 
-## Customize configuration
+- Bun package manager
+- Google Maps API key
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+### Installation
 
-## Project Setup
+1. Clone the repository
 
-```sh
-bun install
+```bash
+git clone <repository-url>
+cd multipoint-navigation-planner
 ```
 
-### Compile and Hot-Reload for Development
+2. Install dependencies
 
-```sh
-bun dev
+```bash
+bun install --frozen-lockfile
 ```
 
-### Type-Check, Compile and Minify for Production
+3. Create a `.env` file in the root directory and add your Google Maps API key:
 
-```sh
-bun run build
+```env
+VITE_GOOGLE_MAPS_API_KEY=your_api_key_here
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+4. Start the development server
 
-```sh
-bun lint
+```bash
+bun run start
 ```
+
+The application will be available at `http://localhost:5173`
+
+## 🛠️ Built With
+
+- [Vue 3](https://vuejs.org/) - The Progressive JavaScript Framework
+- [Vite](https://vitejs.dev/) - Next Generation Frontend Tooling
+- [Google Maps Platform](https://developers.google.com/maps) - Places API & Distance Matrix API
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
