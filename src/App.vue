@@ -2,7 +2,7 @@
   <div class="app">
     <h1>Öffi-Routenplaner</h1>
     <div class="app-content" :class="{ 'app-content__full': results.length == 0 }">
-      <AddressInput @calculate="handleCalculate" />
+      <AddressContainer @calculate="handleCalculate" />
 
       <div v-if="error" class="error-message">
         {{ error }}
@@ -15,9 +15,9 @@
 
 <script setup lang="ts">
 import { useTransitCalculator } from '@/composables/useTransitCalculator'
-import AddressInput from './components/molecules/AddressInput.vue'
-import TransitResults from './components/molecules/TransitResults.vue'
-import type { AddressDuration } from './types/AddressDuration'
+import AddressContainer from '@/components/AddressContainer.vue'
+import TransitResults from '@/components/molecules/TransitResults.vue'
+import type { AddressDuration } from '@/types/AddressDuration'
 
 const { calculateTransitTimes, results, error } = useTransitCalculator()
 
