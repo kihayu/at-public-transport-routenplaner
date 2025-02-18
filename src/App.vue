@@ -17,11 +17,12 @@
 import { useTransitCalculator } from '@/composables/useTransitCalculator'
 import AddressInput from './components/molecules/AddressInput.vue'
 import TransitResults from './components/molecules/TransitResults.vue'
+import type { AddressDuration } from './types/AddressDuration'
 
 const { calculateTransitTimes, results, error } = useTransitCalculator()
 
-const handleCalculate = async (addresses: Array<string>) => {
-  await calculateTransitTimes(addresses)
+const handleCalculate = async (addresses: Array<AddressDuration>, startTime: number) => {
+  await calculateTransitTimes(addresses, startTime)
 }
 </script>
 
@@ -34,20 +35,8 @@ const handleCalculate = async (addresses: Array<string>) => {
 
 .app-content {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: var(--spacing-8);
-}
-
-.app-content .address-input {
-  width: 66.66%;
-}
-
-.app-content .transit-results {
-  width: 33.34%;
-}
-
-.app-content__full .address-input {
-  width: 100%;
 }
 
 h1 {
