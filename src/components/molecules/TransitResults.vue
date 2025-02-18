@@ -29,18 +29,10 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
 import moment from 'moment'
-
-interface Result {
-  origin: string
-  destination: string
-  duration: string
-  arrivalDateTime: string
-  stayTime: string | null
-  status: string
-}
+import type { TransitResult } from '@/types/TransitCalculator'
 
 export interface TransitResultProps {
-  results: Array<Result>
+  results: Array<TransitResult>
 }
 
 defineProps<TransitResultProps>()

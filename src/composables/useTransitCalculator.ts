@@ -1,27 +1,6 @@
-import type { AddressDuration } from '@/types/AddressDuration'
 import { ref } from 'vue'
-
-interface TransitResult {
-  origin: string
-  destination: string
-  duration: string
-  arrivalDateTime: string
-  stayTime: string | null
-  status: string
-}
-
-interface DistanceMatrixResponse {
-  status: string
-  rows: Array<{
-    elements: Array<{
-      status: string
-      duration: {
-        text: string
-        value: number
-      }
-    }>
-  }>
-}
+import type { AddressDuration } from '@/types/AddressDuration'
+import type { DistanceMatrixResponse, TransitResult } from '@/types/TransitCalculator'
 
 export function useTransitCalculator() {
   const results = ref<Array<TransitResult>>([])

@@ -1,18 +1,5 @@
 import { ref } from 'vue'
-
-interface PlaceAutocompletePrediction {
-  description: string
-  place_id: string
-  structured_formatting: {
-    main_text: string
-    secondary_text: string
-  }
-}
-
-interface PlacesAutocompleteResponse {
-  predictions: PlaceAutocompletePrediction[]
-  status: string
-}
+import type { PlaceAutocompletePrediction, PlacesAutocompleteResponse } from '@/types/PlaceAutocomplete'
 
 export function usePlacesAutocomplete() {
   const predictions = ref<PlaceAutocompletePrediction[]>([])
