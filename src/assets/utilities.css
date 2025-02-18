@@ -47,6 +47,9 @@
 .grid { display: grid; }
 .hidden { display: none; }
 
+/* Width */
+.w-full { width: 100%; }
+
 /* Flex */
 .flex-row { flex-direction: row; }
 .flex-col { flex-direction: column; }

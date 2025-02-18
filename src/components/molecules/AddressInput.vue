@@ -1,50 +1,60 @@
 <template>
-  <label :for="'address-' + index" class="mb-2 text-sm font-medium text-gray-700">
-    Adresse {{ index + 1 }}
-  </label>
-  <div class="flex items-start gap-2">
-    <input
-      :id="'address-' + index"
-      :value="addressInput.address"
-      type="text"
-      placeholder="Geben Sie eine Adresse ein"
-      class="input"
-      :class="{ loading: isLoading }"
-      @input="handleInput(index, $event)"
-      @focus="handleFocus(index, $event)"
-      @blur="handleBlur(index)"
-      @keydown.enter="handleEnter(index)"
-      @keydown.down.prevent="handleArrowDown()"
-      @keydown.up.prevent="handleArrowUp()"
-    />
-    <!-- Start time input -->
-    <input
-      v-if="index === 0"
-      id="address-starttime"
-      :value="startTime"
-      type="text"
-      placeholder="HH:MM"
-      class="input duration-input"
-      v-maska="maskOptions"
-      @input="updateStartTime"
-      @blur="validateStartTime"
-    />
-    <template v-if="showExtensions">
-      <!-- Stay duration time input -->
+  <div class="flex gap-2 w-full">
+    <div class="flex flex-col w-full">
+      <label :for="'address-' + index" class="mb-2 text-sm font-medium text-gray-700">
+        Adresse {{ index + 1 }}
+      </label>
       <input
-        :id="'address-duration-' + index"
-        :value="addressInput.durationInput"
+        :id="'address-' + index"
+        :value="addressInput.address"
+        type="text"
+        placeholder="Geben Sie eine Adresse ein"
+        class="input"
+        :class="{ loading: isLoading }"
+        @input="handleInput(index, $event)"
+        @focus="handleFocus(index, $event)"
+        @blur="handleBlur(index)"
+        @keydown.enter="handleEnter(index)"
+        @keydown.down.prevent="handleArrowDown()"
+        @keydown.up.prevent="handleArrowUp()"
+      />
+    </div>
+    <!-- Start time input -->
+    <div v-if="index === 0" class="flex flex-col">
+      <label for="address-starttime" class="mb-2 text-sm font-medium text-gray-700">
+        Startzeit
+      </label>
+      <input
+        id="address-starttime"
+        :value="startTime"
         type="text"
         placeholder="HH:MM"
         class="input duration-input"
         v-maska="maskOptions"
-        @input="updateDuration($event)"
-        @blur="validateDuration()"
+        @input="updateStartTime"
+        @blur="validateStartTime"
       />
+    </div>
 
+    <template v-if="showExtensions">
+      <div class="flex flex-col">
+        <label :id="'address-duration-' + index" class="mb-2 text-sm font-medium text-gray-700">
+          Verweildauer
+        </label>
+        <input
+          :id="'address-duration-' + index"
+          :value="addressInput.durationInput"
+          type="text"
+          placeholder="HH:MM"
+          class="input duration-input"
+          v-maska="maskOptions"
+          @input="updateDuration($event)"
+          @blur="validateDuration()"
+        />
+      </div>
       <button
         @click="removeAddress(index)"
-        class="button button-secondary ml-2"
+        class="button button-secondary button-remove ml-2"
         :class="{ hidden: index <= 1 }"
         type="button"
       >
@@ -237,7 +247,6 @@ const handleArrowUp = () => {
 
 <style>
 .duration-input {
-  flex: 0 0 100px;
   text-align: center;
 }
 
@@ -255,5 +264,10 @@ const handleArrowUp = () => {
 .prediction-item:hover,
 .prediction-item.active {
   background-color: var(--color-surface-hover);
+}
+
+.button-remove {
+  height: 36px;
+  align-self: flex-end;
 }
 </style>
