@@ -4,6 +4,7 @@ interface TransitResult {
   origin: string
   destination: string
   duration: string
+  arrivalDateTime: string
   status: string
 }
 
@@ -64,6 +65,7 @@ export function useTransitCalculator() {
             origin,
             destination,
             duration: element.duration?.text || 'N/A',
+            arrivalDateTime: new Date((departureTime + element.duration?.value || 0) * 1000).toISOString(),
             status: element.status,
           })
           departureTime += element.duration?.value || 0

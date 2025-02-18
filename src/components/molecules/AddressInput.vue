@@ -83,6 +83,8 @@
             <div class="font-medium">{{ result.destination }}</div>
             <div class="text-sm text-gray-600 mt-2">Dauer:</div>
             <div class="font-medium text-primary">{{ result.duration }}</div>
+            <div class="text-sm text-gray-600 mt-2">Ankunft:</div>
+            <div class="font-medium">{{ formatArrivalTime(result.arrivalDateTime) }}</div>
           </div>
         </div>
       </div>
@@ -94,6 +96,7 @@
 import { ref, computed } from 'vue'
 import { useTransitCalculator } from '@/composables/useTransitCalculator'
 import { usePlacesAutocomplete } from '@/composables/usePlacesAutocomplete'
+import moment from 'moment'
 
 const addresses = ref<string[]>(['', ''])
 
@@ -147,6 +150,10 @@ const selectPrediction = (prediction: { description: string }, index: number) =>
 const calculate = async () => {
   const validAddresses = addresses.value.filter((address) => address.trim() !== '')
   await calculateTransitTimes(validAddresses)
+}
+
+const formatArrivalTime = (isoTime: string) => {
+  return moment(isoTime).format('HH:mm')
 }
 </script>
 
