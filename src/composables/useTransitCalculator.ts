@@ -1,5 +1,4 @@
 import { ref } from 'vue'
-import { Client, TravelMode } from '@googlemaps/google-maps-services-js'
 
 interface TransitResult {
   origin: string
@@ -8,11 +7,23 @@ interface TransitResult {
   status: string
 }
 
+interface DistanceMatrixResponse {
+  status: string
+  rows: Array<{
+    elements: Array<{
+      status: string
+      duration: {
+        text: string
+        value: number
+      }
+    }>
+  }>
+}
+
 export function useTransitCalculator() {
   const results = ref<TransitResult[]>([])
   const isLoading = ref(false)
   const error = ref<string | null>(null)
-  const client = new Client({})
 
   const calculateTransitTimes = async (addresses: string[]) => {
     if (addresses.length < 2) {
@@ -29,18 +40,25 @@ export function useTransitCalculator() {
         const origin = addresses[i]
         const destination = addresses[i + 1]
 
-        const response = await client.distancematrix({
-          params: {
-            origins: [origin],
-            destinations: [destination],
-            mode: TravelMode.transit,
-            departure_time: Date.now(),
-            key: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-          },
-        })
+        const url = new URL('/api/google/maps/api/distancematrix/json', window.location.origin)
+        const params = {
+          origins: origin,
+          destinations: destination,
+          mode: 'transit',
+          departure_time: 'now'
+        }
 
-        if (response.data.status === 'OK' && response.data.rows[0]?.elements[0]) {
-          const element = response.data.rows[0].elements[0]
+        url.search = new URLSearchParams(params).toString()
+
+        const response = await fetch(url)
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+
+        const data: DistanceMatrixResponse = await response.json()
+
+        if (data.status === 'OK' && data.rows[0]?.elements[0]) {
+          const element = data.rows[0].elements[0]
           results.value.push({
             origin,
             destination,
