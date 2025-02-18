@@ -1,61 +1,51 @@
 <template>
-  <div class="flex gap-2 w-full">
-    <div class="flex flex-col w-full">
-      <label :for="'address-' + index" class="mb-2 text-sm font-medium text-gray-700">
-        Adresse {{ index + 1 }}
-      </label>
-      <input
-        :id="'address-' + index"
-        :value="addressInput.address"
-        type="text"
-        placeholder="Geben Sie eine Adresse ein"
-        class="input"
-        :class="{ loading: isLoading }"
-        @input="handleInput(index, $event)"
-        @focus="handleFocus(index, $event)"
-        @blur="handleBlur(index)"
-        @keydown.enter="handleEnter(index)"
-        @keydown.down.prevent="handleArrowDown()"
-        @keydown.up.prevent="handleArrowUp()"
-      />
-    </div>
-    <!-- Start time input -->
-    <div v-if="index === 0" class="flex flex-col">
-      <label for="address-starttime" class="mb-2 text-sm font-medium text-gray-700">
-        Startzeit
-      </label>
-      <input
-        id="address-starttime"
-        :value="startTime"
-        type="text"
-        placeholder="HH:MM"
-        class="input duration-input"
-        v-maska="maskOptions"
-        @input="updateStartTime"
-        @blur="validateStartTime"
-      />
-    </div>
+  <div class="flex w-full gap-2">
+    <InputField
+      :id="'address-' + index"
+      :value="addressInput.address"
+      container-full-width
+      placeholder="Geben Sie eine Adresse ein"
+      :class="{ 'bg-gray-50': isLoading }"
+      @input="handleInput(index, $event)"
+      @focus="handleFocus(index, $event)"
+      @blur="handleBlur(index)"
+      @keydown.enter="handleEnter(index)"
+      @keydown.down.prevent="handleArrowDown()"
+      @keydown.up.prevent="handleArrowUp()"
+    >
+      <template #label> Adresse {{ index + 1 }} </template>
+    </InputField>
+    <InputField
+      v-if="index === 0"
+      id="address-starttime"
+      :value="startTime"
+      placeholder="HH:MM"
+      :mask-options="maskOptions"
+      centered-text
+      short-width
+      @input="updateStartTime"
+      @blur="validateStartTime"
+    >
+      <template #label> Startzeit </template>
+    </InputField>
 
     <template v-if="showExtensions">
-      <div class="flex flex-col">
-        <label :id="'address-duration-' + index" class="mb-2 text-sm font-medium text-gray-700">
-          Verweildauer
-        </label>
-        <input
-          :id="'address-duration-' + index"
-          :value="addressInput.durationInput"
-          type="text"
-          placeholder="HH:MM"
-          class="input duration-input"
-          v-maska="maskOptions"
-          @input="updateDuration($event)"
-          @blur="validateDuration()"
-        />
-      </div>
+      <InputField
+        id="address-duration"
+        :value="addressInput.durationInput"
+        placeholder="HH:MM"
+        :mask-options="maskOptions"
+        centered-text
+        short-width
+        @input="updateDuration($event)"
+        @blur="validateDuration"
+      >
+        <template #label> Verweildauer </template>
+      </InputField>
       <button
         @click="removeAddress(index)"
-        class="button button-secondary button-remove"
-        :class="{ hidden: index <= 1 }"
+        class="mt-7 cursor-pointer rounded-md bg-red-50 px-4 py-2 text-red-600 transition-colors duration-200 hover:bg-red-100 hover:text-red-700"
+        :class="{ hidden: index < 1 }"
         type="button"
       >
         Entfernen
@@ -64,17 +54,17 @@
   </div>
   <div
     v-if="showPredictions[index] && predictions.length > 0"
-    class="predictions-dropdown absolute top-full left-0 right-0 bg-surface border rounded shadow-md mt-1 z-50"
+    class="absolute top-full right-0 left-0 z-50 mt-1 max-h-60 overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg"
   >
     <div
       v-for="(prediction, predIndex) in predictions"
       :key="prediction.place_id"
-      class="prediction-item p-2 hover:bg-surface-hover cursor-pointer transition-fast"
-      :class="{ active: activeIndex === predIndex }"
+      class="cursor-pointer p-3 transition-colors duration-200 hover:bg-gray-50"
+      :class="{ 'bg-gray-50': activeIndex === predIndex }"
       @click="selectPrediction(prediction)"
     >
-      <div class="font-medium">{{ prediction.structured_formatting.main_text }}</div>
-      <div class="text-sm text-gray-600">
+      <div class="font-medium text-gray-900">{{ prediction.structured_formatting.main_text }}</div>
+      <div class="text-sm text-gray-500">
         {{ prediction.structured_formatting.secondary_text }}
       </div>
     </div>
@@ -89,7 +79,7 @@
 import { ref } from 'vue'
 import { usePlacesAutocomplete } from '@/composables/usePlacesAutocomplete'
 import type { AddressDuration } from '@/types/AddressDuration'
-import { vMaska } from 'maska/vue'
+import InputField from '@/components/atoms/InputField.vue'
 import moment from 'moment'
 
 export interface AddressInputProps {
@@ -244,30 +234,3 @@ const handleArrowUp = () => {
   }
 }
 </script>
-
-<style>
-.duration-input {
-  text-align: center;
-}
-
-.predictions-dropdown {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.prediction-item {
-  padding: var(--spacing-2) var(--spacing-3);
-  cursor: pointer;
-  transition: background-color var(--transition-fast);
-}
-
-.prediction-item:hover,
-.prediction-item.active {
-  background-color: var(--color-surface-hover);
-}
-
-.button-remove {
-  height: 36px;
-  align-self: flex-end;
-}
-</style>
