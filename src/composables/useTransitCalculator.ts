@@ -1,3 +1,4 @@
+import type { AddressDuration } from '@/types/AddressDuration'
 import { ref } from 'vue'
 
 interface TransitResult {
@@ -5,6 +6,7 @@ interface TransitResult {
   destination: string
   duration: string
   arrivalDateTime: string
+  stayTime: string | null
   status: string
 }
 
@@ -26,7 +28,7 @@ export function useTransitCalculator() {
   const isLoading = ref(false)
   const error = ref<string | null>(null)
 
-  const calculateTransitTimes = async (addresses: Array<string>) => {
+  const calculateTransitTimes = async (addresses: Array<AddressDuration>, startTime: number) => {
     if (addresses.length < 2) {
       error.value = 'At least two addresses are required'
       return
@@ -37,15 +39,15 @@ export function useTransitCalculator() {
     results.value = []
 
     try {
-      let departureTime = Math.floor(Date.now() / 1000)
+      let departureTime = startTime
       for (let i = 0; i < addresses.length - 1; i++) {
         const origin = addresses[i]
         const destination = addresses[i + 1]
 
         const url = new URL('/api/google/maps/api/distancematrix/json', window.location.origin)
         const params = {
-          origins: origin,
-          destinations: destination,
+          origins: origin.address,
+          destinations: destination.address,
           mode: 'transit',
           departure_time: departureTime.toString(),
         }
@@ -62,14 +64,16 @@ export function useTransitCalculator() {
         if (data.status === 'OK' && data.rows[0]?.elements[0]) {
           const element = data.rows[0].elements[0]
           results.value.push({
-            origin,
-            destination,
+            origin: origin.address,
+            destination: destination.address,
             duration: element.duration?.text || 'N/A',
             arrivalDateTime: new Date(
               (departureTime + element.duration?.value || 0) * 1000,
             ).toISOString(),
+            stayTime: destination.duration !== 0 ? destination.duration.toString() : null,
             status: element.status,
           })
+          departureTime += destination.duration
           departureTime += element.duration?.value || 0
         } else {
           throw new Error('Failed to calculate distance')

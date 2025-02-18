@@ -9,7 +9,7 @@
           <div class="flex items-start gap-2">
             <input
               :id="'address-' + index"
-              v-model="addressInputs[index]"
+              v-model="addressInputs[index].address"
               type="text"
               placeholder="Geben Sie eine Adresse ein"
               class="input"
@@ -21,8 +21,31 @@
               @keydown.down.prevent="handleArrowDown()"
               @keydown.up.prevent="handleArrowUp()"
             />
+            <!-- Start time input -->
+            <input
+              v-if="index === 0"
+              id="address-starttime"
+              v-model="startTime"
+              type="text"
+              placeholder="HH:MM"
+              class="input duration-input"
+              v-maska="maskOptions"
+              @blur="validateDuration(index)"
+            />
+            <!-- Stay duration time input -->
+            <input
+              v-else-if="index !== 0 && index !== addresses.length - 1"
+              :id="'address-duration-' + index"
+              v-model="addressInputs[index].durationInput"
+              type="text"
+              placeholder="HH:MM"
+              class="input duration-input"
+              v-maska="maskOptions"
+              @blur="validateDuration(index)"
+            />
+
             <button
-              v-if="index > 1"
+              v-if="index !== 0 && index !== addresses.length - 1"
               @click="removeAddress(index)"
               class="button button-secondary ml-2"
               :class="{ hidden: index <= 1 }"
@@ -79,24 +102,66 @@
 <script setup lang="ts">
 import { ref, computed, defineEmits } from 'vue'
 import { usePlacesAutocomplete } from '@/composables/usePlacesAutocomplete'
+import type { AddressDuration } from '@/types/AddressDuration'
+import { vMaska } from 'maska/vue'
+import moment from 'moment'
+
+const startTime = ref(moment().format('HH:mm'))
+
+const maskOptions = {
+  mask: '##:##',
+  tokens: {
+    '#': { pattern: /[0-9]/, transform: (v: string) => v },
+  },
+}
 
 const emit = defineEmits<{
-  calculate: [addresses: string[]]
+  calculate: [addresses: Array<AddressDuration>, startTime: number]
 }>()
 
-const addresses = ref<string[]>(['', ''])
-const addressInputs = ref<string[]>(['', ''])
+interface AddressInputState extends AddressDuration {
+  durationInput: string
+}
+
+const addresses = ref<Array<AddressDuration>>([
+  { address: '', duration: 0 },
+  { address: '', duration: 0 },
+])
+const addressInputs = ref<Array<AddressInputState>>([
+  { address: '', duration: 0, durationInput: '' },
+  { address: '', duration: 0, durationInput: '' },
+])
 const showPredictions = ref<boolean[]>([false, false])
 const activeIndex = ref<number>(-1)
 const isLoading = ref(false)
 
 const { predictions, error: autocompleteError, getPlacePredictions } = usePlacesAutocomplete()
 
-const hasEmptyAddresses = computed(() => addresses.value.some((address) => !address.trim()))
+const hasEmptyAddresses = computed(() => addresses.value.some((address) => !address.address.trim()))
+
+const validateDuration = (index: number) => {
+  const timeStr = addressInputs.value[index].durationInput
+  if (!timeStr) {
+    addressInputs.value[index].duration = 0
+    addresses.value[index].duration = 0
+    return
+  }
+
+  const time = moment(timeStr, 'HH:mm', true)
+  if (time.isValid()) {
+    const duration = time.hours() * 3600 + time.minutes() * 60
+    addressInputs.value[index].duration = duration
+    addresses.value[index].duration = duration
+  } else {
+    addressInputs.value[index].durationInput = ''
+    addressInputs.value[index].duration = 0
+    addresses.value[index].duration = 0
+  }
+}
 
 const addAddress = () => {
-  addresses.value.push('')
-  addressInputs.value.push('')
+  addresses.value.push({ address: '', duration: 0 })
+  addressInputs.value.push({ address: '', duration: 0, durationInput: '' })
   showPredictions.value.push(false)
 }
 
@@ -107,9 +172,9 @@ const removeAddress = (index: number) => {
 }
 
 const handleInput = async (index: number) => {
-  if (addressInputs.value[index].length > 0) {
+  if (addressInputs.value[index].address.length > 0) {
     isLoading.value = true
-    await getPlacePredictions(addressInputs.value[index])
+    await getPlacePredictions(addressInputs.value[index].address)
     showPredictions.value[index] = true
     activeIndex.value = -1
     isLoading.value = false
@@ -133,14 +198,22 @@ const handleBlur = (index: number) => {
 }
 
 const selectPrediction = (prediction: { description: string }, index: number) => {
-  addresses.value[index] = prediction.description
-  addressInputs.value[index] = prediction.description
+  const currentDuration = addressInputs.value[index].duration
+  const currentDurationInput = addressInputs.value[index].durationInput
+
+  addresses.value[index] = { address: prediction.description, duration: currentDuration }
+  addressInputs.value[index] = {
+    address: prediction.description,
+    duration: currentDuration,
+    durationInput: currentDurationInput,
+  }
   showPredictions.value = showPredictions.value.map(() => false)
 }
 
 const calculate = () => {
-  const validAddresses = addresses.value.filter((address) => address.trim() !== '')
-  emit('calculate', validAddresses)
+  const validAddresses = addresses.value.filter((address) => address.address.trim() !== '')
+  const unixStartTime = moment(startTime.value, 'HH:mm', true).unix()
+  emit('calculate', validAddresses, unixStartTime)
 }
 
 const handleEnter = (index: number) => {
@@ -184,6 +257,11 @@ const handleArrowUp = () => {
 
 .input-wrapper .input {
   flex: 1;
+}
+
+.duration-input {
+  flex: 0 0 100px;
+  text-align: center;
 }
 
 .predictions-dropdown {
