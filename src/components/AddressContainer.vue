@@ -1,9 +1,9 @@
 <template>
-  <div class="address-input card p-6">
-    <div class="address-list mb-6">
-      <div v-for="(_, index) in addresses" :key="index" class="address-field relative">
+  <div class="max-h-fit rounded-lg bg-white p-6 shadow-md">
+    <div class="mb-6 space-y-4">
+      <div v-for="(address, index) in addresses" :key="index" class="relative">
         <AddressInput
-          :address="addresses[index]"
+          :address="address"
           :address-input="addressInputs[index]"
           :index="index"
           :show-extensions="index !== 0 && index !== addresses.length - 1"
@@ -15,19 +15,24 @@
       </div>
     </div>
 
-    <div class="actions border-t pt-6 mt-6 flex gap-4">
+    <div class="mt-6 flex gap-4 border-t border-gray-200 pt-6">
       <button
         @click="addAddress"
-        class="button button-secondary"
+        class="cursor-pointer rounded-md bg-gray-100 px-4 py-2 text-gray-700 transition-colors duration-200 hover:bg-gray-200"
         type="button"
         :disabled="isLoading"
+        :class="{ 'cursor-not-allowed opacity-50': isLoading }"
       >
         Adresse hinzufügen
       </button>
       <button
         @click="calculate"
-        class="button button-primary"
+        class="rounded-md bg-blue-600 px-4 py-2 text-white transition-colors duration-200 hover:bg-blue-700 disabled:hover:bg-blue-600"
         :disabled="addresses.length < 2 || isLoading || hasEmptyAddresses"
+        :class="{
+          'cursor-not-allowed opacity-50': addresses.length < 2 || isLoading || hasEmptyAddresses,
+          'cursor-pointer': !isLoading && !hasEmptyAddresses,
+        }"
       >
         {{ isLoading ? 'Berechne...' : 'Route berechnen' }}
       </button>
@@ -38,7 +43,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import type { AddressDuration } from '@/types/AddressDuration'
-import AddressInput from '@/components/molecules/AddressInput.vue'
+import AddressInput from '@/components/AddressInput.vue'
 import moment from 'moment'
 
 interface AddressInputState extends AddressDuration {
@@ -93,17 +98,3 @@ const calculate = () => {
   emit('calculate', validAddresses, startTimeSeconds)
 }
 </script>
-
-<style>
-.address-input {
-  max-height: fit-content;
-}
-
-.address-field {
-  margin-bottom: var(--spacing-4);
-}
-
-.address-field:last-child {
-  margin-bottom: 0;
-}
-</style>

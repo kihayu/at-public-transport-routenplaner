@@ -1,10 +1,10 @@
 <template>
-  <div class="app">
-    <h1>Öffi-Routenplaner</h1>
-    <div class="app-content" :class="{ 'app-content__full': results.length == 0 }">
+  <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <h1 class="mb-8 text-center text-3xl font-bold text-gray-900">Öffi-Routenplaner</h1>
+    <div class="flex flex-col gap-8">
       <AddressContainer @calculate="handleCalculate" />
 
-      <div v-if="error" class="error-message">
+      <div v-if="error" class="rounded-md bg-red-100 p-4 text-red-700">
         {{ error }}
       </div>
 
@@ -16,7 +16,7 @@
 <script setup lang="ts">
 import { useTransitCalculator } from '@/composables/useTransitCalculator'
 import AddressContainer from '@/components/AddressContainer.vue'
-import TransitResults from '@/components/molecules/TransitResults.vue'
+import TransitResults from '@/components/TransitResults.vue'
 import type { AddressDuration } from '@/types/AddressDuration'
 
 const { calculateTransitTimes, results, error } = useTransitCalculator()
@@ -25,23 +25,3 @@ const handleCalculate = async (addresses: Array<AddressDuration>, startTime: num
   await calculateTransitTimes(addresses, startTime)
 }
 </script>
-
-<style>
-.app {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.app-content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-8);
-}
-
-h1 {
-  text-align: center;
-  color: #2c3e50;
-  margin-bottom: 30px;
-}
-</style>
