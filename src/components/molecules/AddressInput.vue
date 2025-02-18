@@ -54,7 +54,7 @@
       </div>
       <button
         @click="removeAddress(index)"
-        class="button button-secondary button-remove ml-2"
+        class="button button-secondary button-remove"
         :class="{ hidden: index <= 1 }"
         type="button"
       >
