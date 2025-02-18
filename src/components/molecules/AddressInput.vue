@@ -1,16 +1,12 @@
 <template>
-  <div class="card">
-    <div class="address-list">
+  <div class="address-input card p-6">
+    <div class="address-list mb-6">
       <div v-for="(_, index) in addresses" :key="index" class="address-field">
-        <div class="input-group" style="position: relative">
-          <label
-            :for="'address-' + index"
-            class="text-sm font-medium text-gray-700"
-            style="margin-bottom: var(--spacing-2)"
-          >
+        <div class="relative">
+          <label :for="'address-' + index" class="mb-2 text-sm font-medium text-gray-700">
             Adresse {{ index + 1 }}
           </label>
-          <div class="input-wrapper">
+          <div class="flex items-start gap-2">
             <input
               :id="'address-' + index"
               v-model="addressInputs[index]"
@@ -28,23 +24,26 @@
             <button
               v-if="index > 1"
               @click="removeAddress(index)"
-              class="button button-secondary"
+              class="button button-secondary ml-2"
+              :class="{ hidden: index <= 1 }"
               type="button"
-              style="margin-left: var(--spacing-2)"
             >
               Entfernen
             </button>
           </div>
-          <div v-if="showPredictions[index] && predictions.length > 0" class="predictions-dropdown">
+          <div
+            v-if="showPredictions[index] && predictions.length > 0"
+            class="predictions-dropdown absolute top-full left-0 right-0 bg-surface border rounded shadow-md mt-1 z-50"
+          >
             <div
               v-for="(prediction, predIndex) in predictions"
               :key="prediction.place_id"
-              class="prediction-item"
+              class="prediction-item p-2 hover:bg-surface-hover cursor-pointer transition-fast"
               :class="{ active: activeIndex === predIndex }"
               @click="selectPrediction(prediction, index)"
             >
-              <div class="main-text">{{ prediction.structured_formatting.main_text }}</div>
-              <div class="secondary-text">
+              <div class="font-medium">{{ prediction.structured_formatting.main_text }}</div>
+              <div class="text-sm text-gray-600">
                 {{ prediction.structured_formatting.secondary_text }}
               </div>
             </div>
@@ -53,7 +52,7 @@
       </div>
     </div>
 
-    <div class="actions" style="margin-top: var(--spacing-6); display: flex; gap: var(--spacing-4)">
+    <div class="actions border-t pt-6 mt-6 flex gap-4">
       <button
         @click="addAddress"
         class="button button-secondary"
@@ -166,52 +165,9 @@ const handleArrowUp = () => {
 }
 </script>
 
-<style scoped>
-.input-wrapper {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-2);
-}
-
-.input-wrapper .input {
-  flex: 1;
-}
-
-.route-details {
-  display: grid;
-  gap: var(--spacing-1);
-  padding: var(--spacing-4);
-  background-color: var(--color-surface-hover);
-  border-radius: var(--radius-md);
-}
-
-.text-sm {
-  font-size: var(--font-size-sm);
-}
-
-.text-gray-600 {
-  color: var(--color-text-secondary);
-}
-
-.text-gray-700 {
-  color: var(--color-text);
-}
-
-.font-medium {
-  font-weight: 500;
-}
-
-.mt-2 {
-  margin-top: var(--spacing-2);
-}
-
-.text-primary {
-  color: var(--color-primary);
-}
-
-.transit-times {
-  display: grid;
-  gap: var(--spacing-4);
+<style>
+.address-input {
+  max-height: fit-content;
 }
 
 .address-field {
@@ -226,20 +182,13 @@ const handleArrowUp = () => {
   margin-bottom: var(--spacing-6);
 }
 
-.actions {
-  border-top: 1px solid var(--color-border);
-  padding-top: var(--spacing-6);
+.input-wrapper .input {
+  flex: 1;
 }
 
 .predictions-dropdown {
   max-height: 300px;
   overflow-y: auto;
-  z-index: 50;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background-color: var(--color-surface);
-  box-shadow: var(--shadow-lg);
-  margin-top: var(--spacing-1);
 }
 
 .prediction-item {

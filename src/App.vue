@@ -1,13 +1,15 @@
 <template>
   <div class="app">
     <h1>Öffi-Routenplaner</h1>
-    <AddressInput @calculate="handleCalculate" />
+    <div class="app-content" :class="{ 'app-content__full': results.length == 0 }">
+      <AddressInput @calculate="handleCalculate" />
 
-    <div v-if="error" class="error-message">
-      {{ error }}
+      <div v-if="error" class="error-message">
+        {{ error }}
+      </div>
+
+      <TransitResults :results="results" />
     </div>
-
-    <TransitResults :results="results" />
   </div>
 </template>
 
@@ -28,6 +30,24 @@ const handleCalculate = async (addresses: Array<string>) => {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+}
+
+.app-content {
+  display: flex;
+  flex-direction: row;
+  gap: var(--spacing-8);
+}
+
+.app-content .address-input {
+  width: 66.66%;
+}
+
+.app-content .transit-results {
+  width: 33.34%;
+}
+
+.app-content__full .address-input {
+  width: 100%;
 }
 
 h1 {

@@ -1,9 +1,9 @@
 <template>
-  <div v-if="results.length > 0" class="transit-results">
-    <h3 style="margin-bottom: var(--spacing-4); font-size: var(--font-size-lg)">Ergebnisse:</h3>
-    <div class="transit-times">
-      <div v-for="(result, index) in results" :key="index" class="transit-time">
-        <div class="route-details">
+  <div v-if="results.length > 0" class="transit-results p-6">
+    <h3 class="text-lg font-medium m-0 mb-4">Ergebnisse:</h3>
+    <div class="grid gap-4">
+      <div v-for="(result, index) in results" :key="index" class="p-4 border rounded bg-surface">
+        <div class="flex flex-col gap-2">
           <div class="text-sm text-gray-600">Von:</div>
           <div class="font-medium">{{ result.origin }}</div>
           <div class="text-sm text-gray-600 mt-2">Nach:</div>
@@ -48,6 +48,11 @@ const formatArrivalTime = (isoTime: string) => {
   padding: var(--spacing-4);
   background-color: var(--color-surface-hover);
   border-radius: var(--radius-md);
+}
+
+.transit-results__title {
+  margin: 0 0 var(--spacing-4) 0;
+  font-size: var(--font-size-lg);
 }
 
 .transit-times {
