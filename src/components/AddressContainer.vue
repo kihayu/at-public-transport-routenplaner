@@ -7,9 +7,12 @@
           :address-input="addressInputs[index]"
           :index="index"
           :show-extensions="index !== 0 && index !== addresses.length - 1"
+          :start-date="startDate"
+          :start-time="startTime"
           @update:address="updateAddress(index, $event)"
           @update:address-input="updateAddressInput(index, $event)"
           @update:start-time="updateStartTime"
+          @update:start-date="updateStartDate"
           @remove="removeAddress"
         />
       </div>
@@ -56,6 +59,7 @@ const emit = defineEmits<{
 
 const isLoading = ref(false)
 const startTime = ref(moment().format('HH:mm'))
+const startDate = ref(moment().format('YYYY-MM-DD'))
 
 const addresses = ref<Array<AddressDuration>>([
   { address: '', duration: 0 },
@@ -81,6 +85,10 @@ const updateStartTime = (newTime: string) => {
   startTime.value = newTime
 }
 
+const updateStartDate = (newDate: string) => {
+  startDate.value = newDate
+}
+
 const addAddress = () => {
   addresses.value.push({ address: '', duration: 0 })
   addressInputs.value.push({ address: '', duration: 0, durationInput: '' })
@@ -93,8 +101,11 @@ const removeAddress = (index: number) => {
 
 const calculate = () => {
   const validAddresses = addresses.value.filter((address) => address.address.trim() !== '')
-  const time = moment(startTime.value, 'HH:mm')
-  const startTimeSeconds = Math.floor(time.valueOf() / 1000)
+  const dateTime = moment(startDate.value, 'YYYY-MM-DD').set({
+    hour: parseInt(startTime.value.split(':')[0]),
+    minute: parseInt(startTime.value.split(':')[1]),
+  })
+  const startTimeSeconds = Math.floor(dateTime.valueOf() / 1000)
   emit('calculate', validAddresses, startTimeSeconds)
 }
 </script>

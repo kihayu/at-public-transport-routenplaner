@@ -17,10 +17,21 @@
     </InputField>
     <InputField
       v-if="index === 0"
+      id="address-startdate"
+      :value="props.startDate"
+      type="date"
+      centered-text
+      @input="updateStartDate"
+      @blur="validateStartDate"
+    >
+      <template #label> Startdatum </template>
+    </InputField>
+    <InputField
+      v-if="index === 0"
       id="address-starttime"
-      :value="startTime"
+      :value="props.startTime"
       placeholder="HH:MM"
-      :mask-options="maskOptions"
+      :mask-options="hourMinuteMaskOptions"
       centered-text
       short-width
       @input="updateStartTime"
@@ -34,7 +45,7 @@
         id="address-duration"
         :value="addressInput.durationInput"
         placeholder="HH:MM"
-        :mask-options="maskOptions"
+        :mask-options="hourMinuteMaskOptions"
         centered-text
         short-width
         @input="updateDuration($event)"
@@ -87,6 +98,8 @@ export interface AddressInputProps {
   addressInput: AddressInputState
   index: number
   showExtensions?: boolean
+  startDate: string
+  startTime: string
 }
 
 const props = defineProps<AddressInputProps>()
@@ -95,10 +108,11 @@ const emit = defineEmits<{
   'update:address': [address: AddressDuration]
   'update:addressInput': [addressInput: AddressInputState]
   'update:startTime': [time: string]
+  'update:startDate': [date: string]
   remove: [index: number]
 }>()
 
-const startTime = ref(moment().format('HH:mm'))
+
 
 const updateStartTime = (event: Event) => {
   const value = (event.target as HTMLInputElement).value
@@ -106,9 +120,21 @@ const updateStartTime = (event: Event) => {
 }
 
 const validateStartTime = () => {
-  const time = moment(startTime.value, 'HH:mm', true)
+  const time = moment(props.startTime, 'HH:mm', true)
   if (!time.isValid()) {
     emit('update:startTime', moment().format('HH:mm'))
+  }
+}
+
+const updateStartDate = (event: Event) => {
+  const value = (event.target as HTMLInputElement).value
+  emit('update:startDate', value)
+}
+
+const validateStartDate = () => {
+  const date = moment(props.startDate, 'YYYY-MM-DD', true)
+  if (!date.isValid()) {
+    emit('update:startDate', moment().format('YYYY-MM-DD'))
   }
 }
 
@@ -120,7 +146,7 @@ const updateDuration = (event: Event) => {
   })
 }
 
-const maskOptions = {
+const hourMinuteMaskOptions = {
   mask: '##:##',
   tokens: {
     '#': { pattern: /[0-9]/, transform: (v: string) => v },
