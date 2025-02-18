@@ -1,60 +1,147 @@
 <template>
-  <div class="address-input">
-    <div v-for="(address, index) in addresses" :key="index" class="address-field">
-      <div class="input-group">
-        <label :for="'address-' + index">Adresse {{ index + 1 }}</label>
-        <input
-          :id="'address-' + index"
-          v-model="addresses[index]"
-          type="text"
-          placeholder="Geben Sie eine Adresse ein"
-          class="address-input-field"
-        />
-        <button v-if="index > 1" @click="removeAddress(index)" class="remove-button" type="button">
-          Entfernen
-        </button>
+  <div class="card">
+    <div class="address-list">
+      <div v-for="(_, index) in addresses" :key="index" class="address-field">
+        <div class="input-group" style="position: relative">
+          <label
+            :for="'address-' + index"
+            class="text-sm font-medium text-gray-700"
+            style="margin-bottom: var(--spacing-2)"
+          >
+            Adresse {{ index + 1 }}
+          </label>
+          <div class="input-wrapper">
+            <input
+              :id="'address-' + index"
+              v-model="addressInputs[index]"
+              type="text"
+              placeholder="Geben Sie eine Adresse ein"
+              class="input"
+              :class="{ loading: isLoading }"
+              @input="handleInput(index)"
+              @focus="handleFocus(index)"
+              @blur="handleBlur(index)"
+            />
+            <button
+              v-if="index > 1"
+              @click="removeAddress(index)"
+              class="button button-secondary"
+              type="button"
+              style="margin-left: var(--spacing-2)"
+            >
+              Entfernen
+            </button>
+          </div>
+          <div v-if="showPredictions[index] && predictions.length > 0" class="predictions-dropdown">
+            <div
+              v-for="(prediction, predIndex) in predictions"
+              :key="prediction.place_id"
+              class="prediction-item"
+              :class="{ active: activeIndex === predIndex }"
+              @click="selectPrediction(prediction, index)"
+            >
+              <div class="main-text">{{ prediction.structured_formatting.main_text }}</div>
+              <div class="secondary-text">
+                {{ prediction.structured_formatting.secondary_text }}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="actions">
-      <button @click="addAddress" class="add-button" type="button">Adresse hinzufügen</button>
+    <div class="actions" style="margin-top: var(--spacing-6); display: flex; gap: var(--spacing-4)">
+      <button
+        @click="addAddress"
+        class="button button-secondary"
+        type="button"
+        :disabled="isLoading"
+      >
+        Adresse hinzufügen
+      </button>
       <button
         @click="calculate"
-        class="calculate-button"
-        :disabled="addresses.length < 2 || isLoading"
+        class="button button-primary"
+        :disabled="addresses.length < 2 || isLoading || hasEmptyAddresses"
       >
-        {{ isLoading ? 'Berechne...' : 'Berechnen' }}
+        {{ isLoading ? 'Berechne...' : 'Route berechnen' }}
       </button>
     </div>
 
-    <div v-if="error" class="error">{{ error }}</div>
+    <div v-if="error || autocompleteError" class="error-message">
+      {{ error || autocompleteError }}
+    </div>
 
-    <div v-if="results.length > 0" class="results">
-      <h3>Ergebnisse:</h3>
-      <div v-for="(result, index) in results" :key="index" class="result-item">
-        <p>
-          Von: {{ result.origin }}<br />
-          Nach: {{ result.destination }}<br />
-          Dauer: {{ result.duration }}
-        </p>
+    <div v-if="results.length > 0" class="results-section">
+      <h3 style="margin-bottom: var(--spacing-4); font-size: var(--font-size-lg)">Ergebnisse:</h3>
+      <div class="transit-times">
+        <div v-for="(result, index) in results" :key="index" class="transit-time">
+          <div class="route-details">
+            <div class="text-sm text-gray-600">Von:</div>
+            <div class="font-medium">{{ result.origin }}</div>
+            <div class="text-sm text-gray-600 mt-2">Nach:</div>
+            <div class="font-medium">{{ result.destination }}</div>
+            <div class="text-sm text-gray-600 mt-2">Dauer:</div>
+            <div class="font-medium text-primary">{{ result.duration }}</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useTransitCalculator } from '@/composables/useTransitCalculator'
+import { usePlacesAutocomplete } from '@/composables/usePlacesAutocomplete'
 
-const addresses = ref<string[]>(['', '']) // Start with two address fields
+const addresses = ref<string[]>(['', ''])
+
+const addressInputs = ref<string[]>(['', ''])
+
+const showPredictions = ref<boolean[]>([false, false])
+const activeIndex = ref<number | null>(null)
+
 const { calculateTransitTimes, results, isLoading, error } = useTransitCalculator()
+const { predictions, error: autocompleteError, getPlacePredictions } = usePlacesAutocomplete()
+
+const hasEmptyAddresses = computed(() => addresses.value.some((address) => !address.trim()))
 
 const addAddress = () => {
   addresses.value.push('')
+  addressInputs.value.push('')
+  showPredictions.value.push(false)
 }
 
 const removeAddress = (index: number) => {
   addresses.value.splice(index, 1)
+  addressInputs.value.splice(index, 1)
+  showPredictions.value.splice(index, 1)
+}
+
+const handleInput = async (index: number) => {
+  activeIndex.value = index
+  showPredictions.value = showPredictions.value.map((_, i) => i === index)
+  await getPlacePredictions(addressInputs.value[index])
+}
+
+const handleFocus = (index: number) => {
+  if (addressInputs.value[index]) {
+    handleInput(index)
+  }
+}
+
+const handleBlur = (index: number) => {
+  // Timeout needed for prediction click - otherwise not working
+  setTimeout(() => {
+    showPredictions.value[index] = false
+  }, 200)
+}
+
+const selectPrediction = (prediction: { description: string }, index: number) => {
+  addresses.value[index] = prediction.description
+  addressInputs.value[index] = prediction.description
+  showPredictions.value = showPredictions.value.map(() => false)
 }
 
 const calculate = async () => {
@@ -63,85 +150,90 @@ const calculate = async () => {
 }
 </script>
 
-<style>
-.address-input {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
+<style scoped>
+.input-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+}
+
+.input-wrapper .input {
+  flex: 1;
+}
+
+.route-details {
+  display: grid;
+  gap: var(--spacing-1);
+  padding: var(--spacing-4);
+  background-color: var(--color-surface-hover);
+  border-radius: var(--radius-md);
+}
+
+.text-sm {
+  font-size: var(--font-size-sm);
+}
+
+.text-gray-600 {
+  color: var(--color-text-secondary);
+}
+
+.text-gray-700 {
+  color: var(--color-text);
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.mt-2 {
+  margin-top: var(--spacing-2);
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
+
+.transit-times {
+  display: grid;
+  gap: var(--spacing-4);
 }
 
 .address-field {
-  margin-bottom: 15px;
+  margin-bottom: var(--spacing-4);
 }
 
-.input-group {
-  display: flex;
-  gap: 10px;
-  align-items: center;
+.address-field:last-child {
+  margin-bottom: 0;
 }
 
-label {
-  min-width: 100px;
-}
-
-.address-input-field {
-  flex: 1;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+.address-list {
+  margin-bottom: var(--spacing-6);
 }
 
 .actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--spacing-6);
 }
 
-button {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
+.predictions-dropdown {
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 50;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+  margin-top: var(--spacing-1);
+}
+
+.prediction-item {
+  padding: var(--spacing-2) var(--spacing-3);
   cursor: pointer;
+  transition: background-color var(--transition-fast);
 }
 
-.add-button {
-  background-color: #4caf50;
-  color: white;
-}
-
-.remove-button {
-  background-color: #f44336;
-  color: white;
-}
-
-.calculate-button {
-  background-color: #2196f3;
-  color: white;
-}
-
-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-.error {
-  color: #f44336;
-  margin-top: 10px;
-}
-
-.results {
-  margin-top: 20px;
-  padding: 15px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-}
-
-.result-item {
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-}
-
-.result-item:last-child {
-  border-bottom: none;
+.prediction-item:hover,
+.prediction-item.active {
+  background-color: var(--color-surface-hover);
 }
 </style>
