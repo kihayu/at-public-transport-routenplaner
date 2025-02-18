@@ -38,12 +38,12 @@ export function usePlacesAutocomplete() {
       }
 
       url.search = new URLSearchParams(params).toString()
-      
+
       const response = await fetch(url)
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
-      
+
       const data: PlacesAutocompleteResponse = await response.json()
 
       if (data.status === 'OK') {

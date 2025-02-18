@@ -22,11 +22,11 @@ interface DistanceMatrixResponse {
 }
 
 export function useTransitCalculator() {
-  const results = ref<TransitResult[]>([])
+  const results = ref<Array<TransitResult>>([])
   const isLoading = ref(false)
   const error = ref<string | null>(null)
 
-  const calculateTransitTimes = async (addresses: string[]) => {
+  const calculateTransitTimes = async (addresses: Array<string>) => {
     if (addresses.length < 2) {
       error.value = 'At least two addresses are required'
       return
@@ -65,7 +65,9 @@ export function useTransitCalculator() {
             origin,
             destination,
             duration: element.duration?.text || 'N/A',
-            arrivalDateTime: new Date((departureTime + element.duration?.value || 0) * 1000).toISOString(),
+            arrivalDateTime: new Date(
+              (departureTime + element.duration?.value || 0) * 1000,
+            ).toISOString(),
             status: element.status,
           })
           departureTime += element.duration?.value || 0
