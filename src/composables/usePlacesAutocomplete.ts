@@ -32,9 +32,9 @@ export function usePlacesAutocomplete() {
       const url = new URL('/api/google/maps/api/place/autocomplete/json', window.location.origin)
       const params = {
         input,
-        components: 'country:at', // Restrict to Austria
-        language: 'de', // German language
-        types: 'address' // Only addresses
+        components: 'country:at',
+        language: 'de',
+        types: 'address',
       }
 
       url.search = new URLSearchParams(params).toString()
@@ -66,6 +66,6 @@ export function usePlacesAutocomplete() {
     predictions,
     isLoading,
     error,
-    getPlacePredictions
+    getPlacePredictions,
   }
 }
