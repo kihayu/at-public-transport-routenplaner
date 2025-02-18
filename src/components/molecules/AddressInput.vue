@@ -141,7 +141,7 @@ interface AddressInputState extends AddressDuration {
   durationInput: string
 }
 
-const showPredictions = ref<boolean[]>([false, false])
+const showPredictions = ref<Array<boolean>>([false, false])
 const activeIndex = ref<number>(-1)
 const isLoading = ref(false)
 
