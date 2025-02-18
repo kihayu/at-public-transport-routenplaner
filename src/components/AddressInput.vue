@@ -79,7 +79,7 @@
 import { ref } from 'vue'
 import { usePlacesAutocomplete } from '@/composables/usePlacesAutocomplete'
 import type { AddressDuration } from '@/types/AddressDuration'
-import InputField from '@/components/atoms/InputField.vue'
+import InputField from '@/components/molecules/InputField.vue'
 import moment from 'moment'
 
 export interface AddressInputProps {
