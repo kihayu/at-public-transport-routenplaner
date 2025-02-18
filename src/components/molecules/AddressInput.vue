@@ -71,44 +71,26 @@
       </button>
     </div>
 
-    <div v-if="error || autocompleteError" class="error-message">
-      {{ error || autocompleteError }}
-    </div>
-
-    <div v-if="results.length > 0" class="results-section">
-      <h3 style="margin-bottom: var(--spacing-4); font-size: var(--font-size-lg)">Ergebnisse:</h3>
-      <div class="transit-times">
-        <div v-for="(result, index) in results" :key="index" class="transit-time">
-          <div class="route-details">
-            <div class="text-sm text-gray-600">Von:</div>
-            <div class="font-medium">{{ result.origin }}</div>
-            <div class="text-sm text-gray-600 mt-2">Nach:</div>
-            <div class="font-medium">{{ result.destination }}</div>
-            <div class="text-sm text-gray-600 mt-2">Dauer:</div>
-            <div class="font-medium text-primary">{{ result.duration }}</div>
-            <div class="text-sm text-gray-600 mt-2">Ankunft:</div>
-            <div class="font-medium">{{ formatArrivalTime(result.arrivalDateTime) }}</div>
-          </div>
-        </div>
-      </div>
+    <div v-if="autocompleteError" class="error-message">
+      {{ autocompleteError }}
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useTransitCalculator } from '@/composables/useTransitCalculator'
+import { ref, computed, defineEmits } from 'vue'
 import { usePlacesAutocomplete } from '@/composables/usePlacesAutocomplete'
-import moment from 'moment'
+
+const emit = defineEmits<{
+  calculate: [addresses: string[]]
+}>()
 
 const addresses = ref<string[]>(['', ''])
-
 const addressInputs = ref<string[]>(['', ''])
-
 const showPredictions = ref<boolean[]>([false, false])
 const activeIndex = ref<number>(-1)
+const isLoading = ref(false)
 
-const { calculateTransitTimes, results, isLoading, error } = useTransitCalculator()
 const { predictions, error: autocompleteError, getPlacePredictions } = usePlacesAutocomplete()
 
 const hasEmptyAddresses = computed(() => addresses.value.some((address) => !address.trim()))
@@ -157,13 +139,9 @@ const selectPrediction = (prediction: { description: string }, index: number) =>
   showPredictions.value = showPredictions.value.map(() => false)
 }
 
-const calculate = async () => {
+const calculate = () => {
   const validAddresses = addresses.value.filter((address) => address.trim() !== '')
-  await calculateTransitTimes(validAddresses)
-}
-
-const formatArrivalTime = (isoTime: string) => {
-  return moment(isoTime).format('HH:mm')
+  emit('calculate', validAddresses)
 }
 
 const handleEnter = (index: number) => {
