@@ -36,13 +36,25 @@ bun install --frozen-lockfile
 VITE_GOOGLE_MAPS_API_KEY=your_api_key_here
 ```
 
-4. Start the development server
+### Development
+
+Start the development server
 
 ```bash
-bun run start
+bun run dev
 ```
 
 The application will be available at `http://localhost:5173`
+
+### Preview
+
+Start the preview server
+
+```bash
+bun run preview
+```
+
+The application will be available at `http://localhost:4173`
 
 ## 🛠️ Built With
 
