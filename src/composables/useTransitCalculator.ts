@@ -36,6 +36,7 @@ export function useTransitCalculator() {
     results.value = []
 
     try {
+      let departureTime = Math.floor(Date.now() / 1000)
       for (let i = 0; i < addresses.length - 1; i++) {
         const origin = addresses[i]
         const destination = addresses[i + 1]
@@ -45,7 +46,7 @@ export function useTransitCalculator() {
           origins: origin,
           destinations: destination,
           mode: 'transit',
-          departure_time: 'now'
+          departure_time: departureTime.toString(),
         }
 
         url.search = new URLSearchParams(params).toString()
@@ -65,6 +66,7 @@ export function useTransitCalculator() {
             duration: element.duration?.text || 'N/A',
             status: element.status,
           })
+          departureTime += element.duration?.value || 0
         } else {
           throw new Error('Failed to calculate distance')
         }
