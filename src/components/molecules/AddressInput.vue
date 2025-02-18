@@ -21,6 +21,9 @@
               @input="handleInput(index)"
               @focus="handleFocus(index)"
               @blur="handleBlur(index)"
+              @keydown.enter="handleEnter(index)"
+              @keydown.down.prevent="handleArrowDown()"
+              @keydown.up.prevent="handleArrowUp()"
             />
             <button
               v-if="index > 1"
@@ -103,7 +106,7 @@ const addresses = ref<string[]>(['', ''])
 const addressInputs = ref<string[]>(['', ''])
 
 const showPredictions = ref<boolean[]>([false, false])
-const activeIndex = ref<number | null>(null)
+const activeIndex = ref<number>(-1)
 
 const { calculateTransitTimes, results, isLoading, error } = useTransitCalculator()
 const { predictions, error: autocompleteError, getPlacePredictions } = usePlacesAutocomplete()
@@ -123,9 +126,16 @@ const removeAddress = (index: number) => {
 }
 
 const handleInput = async (index: number) => {
-  activeIndex.value = index
-  showPredictions.value = showPredictions.value.map((_, i) => i === index)
-  await getPlacePredictions(addressInputs.value[index])
+  if (addressInputs.value[index].length > 0) {
+    isLoading.value = true
+    await getPlacePredictions(addressInputs.value[index])
+    showPredictions.value[index] = true
+    activeIndex.value = -1
+    isLoading.value = false
+  } else {
+    showPredictions.value[index] = false
+    activeIndex.value = -1
+  }
 }
 
 const handleFocus = (index: number) => {
@@ -154,6 +164,27 @@ const calculate = async () => {
 
 const formatArrivalTime = (isoTime: string) => {
   return moment(isoTime).format('HH:mm')
+}
+
+const handleEnter = (index: number) => {
+  if (activeIndex.value >= 0 && activeIndex.value < predictions.value.length) {
+    selectPrediction(predictions.value[activeIndex.value], index)
+  }
+  showPredictions.value[index] = false
+  activeIndex.value = -1
+}
+
+const handleArrowDown = () => {
+  if (predictions.value.length > 0) {
+    activeIndex.value = (activeIndex.value + 1) % predictions.value.length
+  }
+}
+
+const handleArrowUp = () => {
+  if (predictions.value.length > 0) {
+    activeIndex.value =
+      activeIndex.value <= 0 ? predictions.value.length - 1 : activeIndex.value - 1
+  }
 }
 </script>
 
