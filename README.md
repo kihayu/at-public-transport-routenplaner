@@ -5,7 +5,8 @@ A Vue 3 application for planning public transport routes in Austria. Calculate t
 ## ✨ Features
 
 - 🔍 Address autocomplete with Google Places API
-- 🗺️ Public transport time calculation between multiple points
+- 🕖 Public transport time calculation between multiple points
+- 🗺️ Showcase of selected points on a map
 - 🎯 Optimized for Vienna's public transport system
 
 ## 🚀 Getting Started
