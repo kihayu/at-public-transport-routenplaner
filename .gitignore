@@ -28,3 +28,6 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+# exclude local .env files, for not exposing API keys
+.env
