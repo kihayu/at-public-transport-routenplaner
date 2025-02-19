@@ -21,7 +21,7 @@ A Vue 3 application for planning public transport routes in Austria. Calculate t
 
 ```bash
 git clone git@github.com:kihayu/at-public-transport-routenplaner.git
-cd multipoint-navigation-planner
+cd at-public-transport-routenplaner
 ```
 
 2. Install dependencies
