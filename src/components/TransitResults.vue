@@ -1,6 +1,7 @@
 <template>
   <div v-if="results.length > 0" class="rounded-lg bg-white p-6 shadow-md">
-    <h3 class="mb-4 text-lg font-medium text-gray-900">Ergebnisse:</h3>
+    <RouteMap :results="results" />
+    <h3 class="mt-6 mb-4 text-2xl font-medium text-gray-900">Route</h3>
     <div v-for="(result, index) in results" :key="index" class="bg-white">
       <div class="flex flex-col">
         <div class="grid grid-cols-[auto_1fr] grid-rows-[auto_2fr_auto] gap-x-3">
@@ -33,9 +34,9 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
 import moment from 'moment'
-import type { TransitResult } from '@/types/TransitCalculator'
+import type { TransitResult } from '@/types/TransitResult'
+import RouteMap from '@/components/RouteMap.vue'
 
 export interface TransitResultProps {
   results: Array<TransitResult>
