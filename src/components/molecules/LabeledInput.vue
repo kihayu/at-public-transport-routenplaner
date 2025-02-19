@@ -11,12 +11,12 @@
 import InputLabel from '@/components/atoms/InputLabel.vue'
 import InputField from '@/components/atoms/InputField.vue'
 
-export interface InputFieldProps {
+export interface LabeledInputProps {
   id: string
   containerFullWidth?: boolean
 }
 
-withDefaults(defineProps<InputFieldProps>(), {
+withDefaults(defineProps<LabeledInputProps>(), {
   containerFullWidth: false,
 })
 

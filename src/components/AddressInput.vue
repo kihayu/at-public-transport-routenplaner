@@ -1,6 +1,6 @@
 <template>
   <div class="flex w-full gap-2">
-    <InputField
+    <LabeledInput
       :id="'address-' + index"
       :value="addressInput.address"
       container-full-width
@@ -14,8 +14,8 @@
       @keydown.up.prevent="handleArrowUp()"
     >
       <template #label> Adresse {{ index + 1 }} </template>
-    </InputField>
-    <InputField
+    </LabeledInput>
+    <LabeledInput
       v-if="index === 0"
       id="address-startdate"
       :value="props.startDate"
@@ -25,8 +25,8 @@
       @blur="validateStartDate"
     >
       <template #label> Startdatum </template>
-    </InputField>
-    <InputField
+    </LabeledInput>
+    <LabeledInput
       v-if="index === 0"
       id="address-starttime"
       :value="props.startTime"
@@ -38,10 +38,10 @@
       @blur="validateStartTime"
     >
       <template #label> Startzeit </template>
-    </InputField>
+    </LabeledInput>
 
     <template v-if="showExtensions">
-      <InputField
+      <LabeledInput
         id="address-duration"
         :value="addressInput.durationInput"
         placeholder="HH:MM"
@@ -52,7 +52,7 @@
         @blur="validateDuration"
       >
         <template #label> Verweildauer </template>
-      </InputField>
+      </LabeledInput>
       <button
         @click="removeAddress(index)"
         class="mt-7 cursor-pointer rounded-md bg-red-50 px-4 py-2 text-red-600 transition-colors duration-200 hover:bg-red-100 hover:text-red-700"
@@ -90,7 +90,7 @@
 import { ref } from 'vue'
 import { usePlacesAutocomplete } from '@/composables/usePlacesAutocomplete'
 import type { AddressDuration } from '@/types/AddressDuration'
-import InputField from '@/components/molecules/InputField.vue'
+import LabeledInput from '@/components/molecules/LabeledInput.vue'
 import moment from 'moment'
 
 export interface AddressInputProps {
@@ -111,8 +111,6 @@ const emit = defineEmits<{
   'update:startDate': [date: string]
   remove: [index: number]
 }>()
-
-
 
 const updateStartTime = (event: Event) => {
   const value = (event.target as HTMLInputElement).value
