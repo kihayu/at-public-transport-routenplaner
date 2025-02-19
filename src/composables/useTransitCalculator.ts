@@ -1,6 +1,10 @@
 import { ref } from 'vue'
 import type { AddressDuration } from '@/types/AddressDuration'
-import type { DistanceMatrixResponse, TransitResult } from '@/types/TransitCalculator'
+import type { TransitResult } from '@/types/TransitResult'
+
+interface DistanceMatrixResponse extends google.maps.DistanceMatrixResponse {
+  status: string
+}
 
 export function useTransitCalculator() {
   const results = ref<Array<TransitResult>>([])

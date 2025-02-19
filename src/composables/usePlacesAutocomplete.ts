@@ -1,8 +1,12 @@
 import { ref } from 'vue'
-import type { PlaceAutocompletePrediction, PlacesAutocompleteResponse } from '@/types/PlaceAutocomplete'
+
+export interface PlacesAutocompleteResponse {
+  predictions: google.maps.places.PlaceResult[]
+  status: string
+}
 
 export function usePlacesAutocomplete() {
-  const predictions = ref<PlaceAutocompletePrediction[]>([])
+  const predictions = ref<Array<google.maps.places.PlaceResult>>([])
   const isLoading = ref(false)
   const error = ref<string | null>(null)
 
