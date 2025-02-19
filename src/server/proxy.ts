@@ -15,6 +15,7 @@ const googleMapsProxy = createProxyMiddleware({
   changeOrigin: true,
   pathRewrite: (path: string) => {
     const url = new URL(path.replace(/^\/api\/google/, ''), 'https://maps.googleapis.com')
+    url.searchParams.append('language', 'de')
     url.searchParams.append('key', process.env.VITE_GOOGLE_MAPS_API_KEY || '')
     return url.pathname + url.search
   },
