@@ -46,6 +46,7 @@ export function useTransitCalculator() {
             origin: origin.address,
             destination: destination.address,
             duration: element.duration?.text || 'N/A',
+            startDateTime: new Date(departureTime * 1000).toISOString(),
             arrivalDateTime: new Date(
               (departureTime + element.duration?.value || 0) * 1000,
             ).toISOString(),
