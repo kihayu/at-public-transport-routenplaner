@@ -1,5 +1,5 @@
 <template>
-  <div class="h-[400px] w-full rounded-lg bg-white shadow-md">
+  <div class="h-[250px] sm:h-[350px] md:h-[400px] w-full rounded-lg bg-white shadow-md">
     <div ref="mapRef" id="route-map" class="h-full w-full rounded-lg"></div>
   </div>
 </template>

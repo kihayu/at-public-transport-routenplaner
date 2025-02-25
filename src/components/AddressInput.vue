@@ -1,67 +1,77 @@
 <template>
-  <div class="flex w-full gap-2">
-    <LabeledInput
-      :id="'address-' + index"
-      :value="addressInput.address"
-      container-full-width
-      placeholder="Geben Sie eine Adresse ein"
-      :class="{ 'bg-gray-50': isLoading }"
-      @input="handleInput(index, $event)"
-      @focus="handleFocus(index, $event)"
-      @blur="handleBlur(index)"
-      @keydown.enter="handleEnter(index)"
-      @keydown.down.prevent="handleArrowDown()"
-      @keydown.up.prevent="handleArrowUp()"
-    >
-      <template #label> Adresse {{ index + 1 }} </template>
-    </LabeledInput>
-    <LabeledInput
-      v-if="index === 0"
-      id="address-startdate"
-      :value="props.startDate"
-      type="date"
-      centered-text
-      @input="updateStartDate"
-      @blur="validateStartDate"
-    >
-      <template #label> Startdatum </template>
-    </LabeledInput>
-    <LabeledInput
-      v-if="index === 0"
-      id="address-starttime"
-      :value="props.startTime"
-      placeholder="HH:MM"
-      :mask-options="hourMinuteMaskOptions"
-      centered-text
-      short-width
-      @input="updateStartTime"
-      @blur="validateStartTime"
-    >
-      <template #label> Startzeit </template>
-    </LabeledInput>
-
-    <template v-if="showExtensions">
+  <div
+    class="mb-3 rounded-lg border border-gray-200 bg-gray-50 p-3 sm:mt-0 sm:mb-0 sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0"
+  >
+    <div class="mb-1 font-semibold text-gray-700 sm:hidden">Adresse {{ index + 1 }}</div>
+    <div class="flex w-full flex-col gap-2 sm:flex-row">
       <LabeledInput
-        id="address-duration"
-        :value="addressInput.durationInput"
-        placeholder="HH:MM"
-        :mask-options="hourMinuteMaskOptions"
-        centered-text
-        short-width
-        @input="updateDuration($event)"
-        @blur="validateDuration"
+        :id="'address-' + index"
+        :value="addressInput.address"
+        container-full-width
+        placeholder="Geben Sie eine Adresse ein"
+        :class="{ 'bg-gray-50': isLoading }"
+        @input="handleInput(index, $event)"
+        @focus="handleFocus(index, $event)"
+        @blur="handleBlur(index)"
+        @keydown.enter="handleEnter(index)"
+        @keydown.down.prevent="handleArrowDown()"
+        @keydown.up.prevent="handleArrowUp()"
       >
-        <template #label> Verweildauer </template>
+        <template #label>
+          <span class="hidden sm:inline">Adresse {{ index + 1 }}</span>
+          <span class="sm:hidden">Straße & Hausnummer</span>
+        </template>
       </LabeledInput>
-      <button
-        @click="removeAddress(index)"
-        class="mt-7 cursor-pointer rounded-md bg-red-50 px-4 py-2 text-red-600 transition-colors duration-200 hover:bg-red-100 hover:text-red-700"
-        :class="{ hidden: index < 1 }"
-        type="button"
-      >
-        Entfernen
-      </button>
-    </template>
+      <div class="mt-2 flex items-end gap-2 sm:mt-0">
+        <LabeledInput
+          v-if="index === 0"
+          id="address-startdate"
+          :value="props.startDate"
+          type="date"
+          centered-text
+          @input="updateStartDate"
+          @blur="validateStartDate"
+        >
+          <template #label> Startdatum </template>
+        </LabeledInput>
+        <LabeledInput
+          v-if="index === 0"
+          id="address-starttime"
+          :value="props.startTime"
+          placeholder="HH:MM"
+          :mask-options="hourMinuteMaskOptions"
+          centered-text
+          short-width
+          @input="updateStartTime"
+          @blur="validateStartTime"
+        >
+          <template #label> Startzeit </template>
+        </LabeledInput>
+
+        <template v-if="showExtensions">
+          <LabeledInput
+            id="address-duration"
+            :value="addressInput.durationInput"
+            placeholder="HH:MM"
+            :mask-options="hourMinuteMaskOptions"
+            centered-text
+            short-width
+            @input="updateDuration($event)"
+            @blur="validateDuration"
+          >
+            <template #label> Verweildauer </template>
+          </LabeledInput>
+          <button
+            @click="removeAddress(index)"
+            class="mt-7 h-10 cursor-pointer rounded-md bg-red-50 px-3 py-2 text-red-600 transition-colors duration-200 hover:bg-red-100 hover:text-red-700"
+            :class="{ hidden: index < 1 }"
+            type="button"
+          >
+            Entfernen
+          </button>
+        </template>
+      </div>
+    </div>
   </div>
   <div
     v-if="showPredictions[index] && predictions.length > 0"

@@ -1,40 +1,48 @@
 <template>
-  <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-    <h1 class="mb-8 text-center text-3xl font-bold text-gray-900">Öffi-Routenplaner</h1>
-    <div class="flex flex-col gap-8">
-      <div class="max-h-fit rounded-lg bg-white p-6 shadow-md">
+  <div class="mx-auto max-w-7xl px-3 py-4 sm:px-6 lg:px-8">
+    <h1 class="mb-4 text-center text-2xl font-bold text-gray-900 sm:mb-8 sm:text-3xl">
+      Öffi-Routenplaner
+    </h1>
+    <div class="flex flex-col gap-4 sm:gap-8">
+      <div class="max-h-fit rounded-lg bg-white p-3 shadow-md sm:p-6">
         <div
-          class="my-4 flex flex-col-reverse gap-x-4 gap-y-4 border-b border-gray-300 pb-4 md:flex-row-reverse"
+          class="my-3 flex flex-col gap-3 border-b border-gray-200 pb-4 sm:my-4 sm:flex-row-reverse sm:gap-x-4"
         >
-          <div
-            class="cursor-pointer rounded-md bg-gray-100 px-4 py-2 text-gray-700 transition-colors duration-200 hover:bg-gray-200"
-          >
+          <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+            <label
+              class="relative flex w-full cursor-pointer items-center justify-center rounded-md bg-gray-100 px-3 py-2 text-gray-700 transition-colors duration-200 hover:bg-gray-200"
+            >
+              <span class="cursor-pointer">Import</span>
+              <input
+                class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                type="file"
+                @change="importFile"
+                accept=".json"
+              />
+            </label>
             <button
-              class="mr-2 cursor-pointer border-r border-gray-400 pr-2 disabled:cursor-not-allowed disabled:opacity-50 md:w-fit"
+              class="w-full cursor-pointer rounded-md bg-blue-100 px-3 py-2 text-blue-700 transition-colors duration-200 hover:bg-blue-200 disabled:cursor-not-allowed disabled:opacity-50 hover:disabled:cursor-not-allowed hover:disabled:bg-blue-100"
               :disabled="!importedFile"
               @click="fillPlan"
             >
-              Import
+              Anwenden
             </button>
-            <input
-              class="w-48 cursor-pointer md:w-fit [&_input]:!cursor-pointer"
-              type="file"
-              @change="importFile"
-              accept=".json"
-            />
           </div>
           <button
-            class="cursor-pointer rounded-md bg-gray-100 px-4 py-2 text-gray-700 transition-colors duration-200 hover:bg-gray-200"
+            class="w-full cursor-pointer rounded-md bg-gray-100 px-3 py-2 text-gray-700 transition-colors duration-200 hover:bg-gray-200 sm:w-auto"
             @click="exportPlan"
           >
             Export
           </button>
         </div>
-        <AddressContainer
-          :imported-addresses="addresses"
-          @calculate="handleCalculate"
-          @address-export="setAddresses"
-        />
+        <div class="mt-2 sm:mt-0">
+          <h2 class="mb-3 text-lg font-medium text-gray-900 sm:hidden">Adressen</h2>
+          <AddressContainer
+            :imported-addresses="addresses"
+            @calculate="handleCalculate"
+            @address-export="setAddresses"
+          />
+        </div>
       </div>
 
       <div v-if="error" class="rounded-md bg-red-100 p-4 text-red-700">
@@ -97,5 +105,6 @@ const fillPlan = async () => {
   const jsonObject = JSON.parse(text)
   console.log(jsonObject)
   addresses.value = jsonObject as Array<AddressDuration>
+  importedFile.value = null
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-6 space-y-4">
+  <div class="mb-4 sm:mb-6 space-y-0 sm:space-y-4">
     <div v-for="(address, index) in addresses" :key="index" class="relative">
       <AddressInput
         :address="address"
@@ -16,10 +16,10 @@
       />
     </div>
   </div>
-  <div class="mt-6 flex gap-4 border-t border-gray-200 pt-6">
+  <div class="mt-4 sm:mt-6 flex flex-col sm:flex-row gap-3 sm:gap-4 border-t border-gray-200 pt-4 sm:pt-6">
     <button
       @click="addAddress"
-      class="cursor-pointer rounded-md bg-gray-100 px-4 py-2 text-gray-700 transition-colors duration-200 hover:bg-gray-200"
+      class="cursor-pointer rounded-md bg-gray-100 px-3 py-2 text-gray-700 transition-colors duration-200 hover:bg-gray-200 w-full sm:w-auto"
       type="button"
       :disabled="isLoading"
       :class="{ 'cursor-not-allowed opacity-50': isLoading }"
@@ -28,7 +28,7 @@
     </button>
     <button
       @click="calculate"
-      class="rounded-md bg-blue-600 px-4 py-2 text-white transition-colors duration-200 hover:bg-blue-700 disabled:hover:bg-blue-600"
+      class="rounded-md bg-blue-600 px-3 py-2 text-white transition-colors duration-200 hover:bg-blue-700 disabled:hover:bg-blue-600 w-full sm:w-auto"
       :disabled="addresses.length < 2 || isLoading || hasEmptyAddresses"
       :class="{
         'cursor-not-allowed opacity-50': addresses.length < 2 || isLoading || hasEmptyAddresses,
