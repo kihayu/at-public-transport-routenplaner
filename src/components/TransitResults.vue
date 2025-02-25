@@ -25,7 +25,7 @@
 
         <template v-if="result.stayTime">
           <div class="my-6 font-medium text-gray-900">
-            Aufenthalt: {{ formatStayTime(result.stayTime) }}
+            Aufenthalt: {{ formatTime(result.stayTime) }}
           </div>
         </template>
       </div>
@@ -35,26 +35,15 @@
 
 <script setup lang="ts">
 import moment from 'moment'
-import type { TransitResult } from '@/types/TransitResult'
 import RouteMap from '@/components/RouteMap.vue'
+import { formatTime } from '@/utils/formatTime'
+import type { TransitResult } from '@/types/TransitResult'
 
 export interface TransitResultProps {
   results: Array<TransitResult>
 }
 
 defineProps<TransitResultProps>()
-
-// Not sure why this doesn't work with moment. Will maybe revisit it.
-const formatStayTime = (msTime: string | null) => {
-  if (!msTime) {
-    return 'N/A'
-  }
-
-  const duration = moment.duration(parseInt(msTime, 10), 'seconds')
-  const hours = Math.floor(duration.asHours()).toString().padStart(2, '0')
-  const minutes = duration.minutes().toString().padStart(2, '0')
-  return `${hours}:${minutes}`
-}
 
 const formatDateTime = (isoTime: string) => {
   return moment(isoTime).format('HH:mm')
