@@ -1,27 +1,48 @@
 <template>
   <div
-    class="mb-3 rounded-lg border border-gray-200 bg-gray-50 p-3 sm:mt-0 sm:mb-0 sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0"
+    class="mb-3 rounded-lg border border-gray-200 bg-gray-50 p-3 sm:mt-0 sm:mb-0 sm:w-full sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0"
   >
     <div class="mb-1 font-semibold text-gray-700 sm:hidden">Adresse {{ index + 1 }}</div>
     <div class="flex w-full flex-col gap-2 sm:flex-row">
-      <LabeledInput
-        :id="'address-' + index"
-        :value="addressInput.address"
-        container-full-width
-        placeholder="Geben Sie eine Adresse ein"
-        :class="{ 'bg-gray-50': isLoading }"
-        @input="handleInput(index, $event)"
-        @focus="handleFocus(index, $event)"
-        @blur="handleBlur(index)"
-        @keydown.enter="handleEnter(index)"
-        @keydown.down.prevent="handleArrowDown()"
-        @keydown.up.prevent="handleArrowUp()"
-      >
-        <template #label>
-          <span class="hidden sm:inline">Adresse {{ index + 1 }}</span>
-          <span class="sm:hidden">Straße & Hausnummer</span>
-        </template>
-      </LabeledInput>
+      <div class="relative sm:flex sm:w-full sm:flex-row sm:gap-2">
+        <LabeledInput
+          :id="'address-' + index"
+          :value="addressInput.address"
+          container-full-width
+          placeholder="Geben Sie eine Adresse ein"
+          :class="{ 'bg-gray-50': isLoading }"
+          @input="handleInput(index, $event)"
+          @focus="handleFocus(index, $event)"
+          @blur="handleBlur(index)"
+          @keydown.enter="handleEnter(index)"
+          @keydown.down.prevent="handleArrowDown()"
+          @keydown.up.prevent="handleArrowUp()"
+        >
+          <template #label>
+            <span class="hidden sm:inline">Adresse {{ index + 1 }}</span>
+            <span class="sm:hidden">Straße & Hausnummer</span>
+          </template>
+        </LabeledInput>
+        <div
+          v-if="showPredictions[index] && predictions.length > 0"
+          class="absolute top-full right-0 left-0 z-50 mt-1 max-h-60 overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg"
+        >
+          <div
+            v-for="(prediction, predIndex) in predictions"
+            :key="prediction.place_id"
+            class="cursor-pointer p-3 transition-colors duration-200 hover:bg-gray-50"
+            :class="{ 'bg-gray-50': activeIndex === predIndex }"
+            @click="selectPrediction(prediction)"
+          >
+            <div class="font-medium text-gray-900">
+              {{ prediction.structured_formatting.main_text }}
+            </div>
+            <div class="text-sm text-gray-500">
+              {{ prediction.structured_formatting.secondary_text }}
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="mt-2 flex items-end gap-2 sm:mt-0">
         <LabeledInput
           v-if="index === 0"
@@ -70,23 +91,6 @@
             Entfernen
           </button>
         </template>
-      </div>
-    </div>
-  </div>
-  <div
-    v-if="showPredictions[index] && predictions.length > 0"
-    class="absolute top-full right-0 left-0 z-50 mt-1 max-h-60 overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg"
-  >
-    <div
-      v-for="(prediction, predIndex) in predictions"
-      :key="prediction.place_id"
-      class="cursor-pointer p-3 transition-colors duration-200 hover:bg-gray-50"
-      :class="{ 'bg-gray-50': activeIndex === predIndex }"
-      @click="selectPrediction(prediction)"
-    >
-      <div class="font-medium text-gray-900">{{ prediction.structured_formatting.main_text }}</div>
-      <div class="text-sm text-gray-500">
-        {{ prediction.structured_formatting.secondary_text }}
       </div>
     </div>
   </div>
