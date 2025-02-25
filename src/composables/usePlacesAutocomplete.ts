@@ -1,12 +1,12 @@
 import { ref } from 'vue'
 
 export interface PlacesAutocompleteResponse {
-  predictions: google.maps.places.PlaceResult[]
+  predictions: google.maps.places.AutocompletePrediction[]
   status: string
 }
 
 export function usePlacesAutocomplete() {
-  const predictions = ref<Array<google.maps.places.PlaceResult>>([])
+  const predictions = ref<Array<google.maps.places.AutocompletePrediction>>([])
   const isLoading = ref(false)
   const error = ref<string | null>(null)
 
@@ -39,6 +39,8 @@ export function usePlacesAutocomplete() {
 
       if (data.status === 'OK') {
         predictions.value = data.predictions
+        console.log('predictions')
+        console.log(predictions.value)
       } else {
         predictions.value = []
         if (data.status !== 'ZERO_RESULTS') {
