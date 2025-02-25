@@ -39,8 +39,6 @@ export function usePlacesAutocomplete() {
 
       if (data.status === 'OK') {
         predictions.value = data.predictions
-        console.log('predictions')
-        console.log(predictions.value)
       } else {
         predictions.value = []
         if (data.status !== 'ZERO_RESULTS') {
