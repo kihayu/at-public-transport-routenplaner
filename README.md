@@ -9,6 +9,12 @@ A Vue 3 application for planning public transport routes in Austria. Calculate t
 - 🗺️ Showcase of selected points on a map
 - 🎯 Optimized for Vienna's public transport system
 
+## 🛠️ Tech Stack
+
+- [Vue 3](https://vuejs.org/) - The Progressive JavaScript Framework
+- [TailwindCSS](https://tailwindcss.com/) - The Frontend UI Framework
+- [Google Maps Platform](https://developers.google.com/maps) - Places API & Distance Matrix API
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -56,12 +62,6 @@ bun run preview
 ```
 
 The application will be available at `http://localhost:4173`
-
-## 🛠️ Built With
-
-- [Vue 3](https://vuejs.org/) - The Progressive JavaScript Framework
-- [Vite](https://vitejs.dev/) - Next Generation Frontend Tooling
-- [Google Maps Platform](https://developers.google.com/maps) - Places API & Distance Matrix API
 
 ## 📝 License
 
