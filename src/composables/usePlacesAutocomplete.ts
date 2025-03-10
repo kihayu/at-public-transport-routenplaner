@@ -25,7 +25,6 @@ export function usePlacesAutocomplete() {
         input,
         components: 'country:at',
         language: 'de',
-        types: 'address',
       }
 
       url.search = new URLSearchParams(params).toString()
