@@ -21,6 +21,7 @@ A Vue 3 application for planning public transport routes in Austria. Calculate t
 
 - Bun package manager
 - Google Maps API key
+- Public Transport Planner API ([GitHub](https://github.com/kihayu/Public-Transport-Planner-API))
 
 ### Installation
 
@@ -40,7 +41,9 @@ bun install --frozen-lockfile
 3. Create a `.env` file in the root directory and add your Google Maps API key:
 
 ```env
-VITE_GOOGLE_MAPS_API_KEY=your_api_key_here
+VITE_TRANSPORT_PLANNER_BASE_URL=host_of_api
+
+default: http://localhost:5279
 ```
 
 ### Development

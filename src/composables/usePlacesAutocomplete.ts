@@ -20,7 +20,10 @@ export function usePlacesAutocomplete() {
     error.value = null
 
     try {
-      const url = new URL('/api/google/maps/api/place/autocomplete/json', window.location.origin)
+      const url = new URL(
+        '/api/places/autocomplete',
+        import.meta.env.VITE_TRANSPORT_PLANNER_BASE_URL || 'http://localhost:5279',
+      )
       const params = {
         input,
         components: 'country:at',

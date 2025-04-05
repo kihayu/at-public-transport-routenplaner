@@ -15,7 +15,7 @@ export function useGoogleMaps() {
       try {
         const script = document.createElement('script')
         const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-        script.src = `/api/google/maps/api/js?key=${googleMapsApiKey}&libraries=places,geometry,marker`
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&libraries=places,geometry,marker`
         script.async = true
         script.defer = true
 
