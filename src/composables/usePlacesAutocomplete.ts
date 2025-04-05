@@ -21,7 +21,7 @@ export function usePlacesAutocomplete() {
 
     const baseUrl = import.meta.env.VITE_TRANSPORT_PLANNER_BASE_URL || 'http://localhost:5279'
     try {
-      const url = new URL('/api/places/autocomplete', baseUrl)
+      const url = new URL('/api/v1/places/autocomplete', baseUrl)
       const params = {
         input,
         components: 'country:at',
