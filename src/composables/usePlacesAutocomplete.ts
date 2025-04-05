@@ -19,11 +19,9 @@ export function usePlacesAutocomplete() {
     isLoading.value = true
     error.value = null
 
+    const baseUrl = import.meta.env.VITE_TRANSPORT_PLANNER_BASE_URL || 'http://localhost:5279'
     try {
-      const url = new URL(
-        '/api/places/autocomplete',
-        import.meta.env.VITE_TRANSPORT_PLANNER_BASE_URL || 'http://localhost:5279',
-      )
+      const url = new URL('/api/places/autocomplete', baseUrl)
       const params = {
         input,
         components: 'country:at',

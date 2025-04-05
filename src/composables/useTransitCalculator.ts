@@ -17,11 +17,9 @@ export function useTransitCalculator() {
     error.value = null
     results.value = []
 
+    const baseUrl = import.meta.env.VITE_TRANSPORT_PLANNER_BASE_URL || 'http://localhost:5279'
     try {
-      const url = new URL(
-        '/api/transit/calculate',
-        import.meta.env.VITE_TRANSPORT_PLANNER_BASE_URL || 'http://localhost:5279',
-      )
+      const url = new URL('/api/transit/calculate', baseUrl)
 
       const validatedAddresses: Array<AddressDuration> = []
       addresses.forEach((address) => {
